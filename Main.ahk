@@ -43,6 +43,7 @@ Persistent(true)
 
 F12::Reload()
 ^+c::GetCoordsColor()
+F7::ShowOCRBox(0.078, 0.912, 0.131-0.078, 0.947-0.912)   ; DEBUG: preview the Continue/Retry OCR box
 
 #HotIf WinActive(GameTitle)
 \::StartRace()

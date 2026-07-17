@@ -270,6 +270,31 @@ GetCoordsColor() {
     SetTimer(() => ToolTip(), -3000)
 }
 
+; ── DEBUG: overlay the exact screen region an OCR ratio-box captures ──
+; Uses the same client-rect ratio basis as GetBackgroundOCR / GetCoordsColor,
+; so the red box lands precisely on what ScanOCR would read.
+ShowOCRBox(ratioX, ratioY, ratioW, ratioH, durationMs := 4000) {
+    global GameTitle
+    if !WinExist(GameTitle) {
+        ShowNotif("error", "OCR Box", "Game window not found.")
+        return
+    }
+
+    WinGetClientPos(&mLeft, &mTop, &mWidth, &mHeight, GameTitle)
+    sx := mLeft + Integer(ratioX * mWidth)
+    sy := mTop  + Integer(ratioY * mHeight)
+    w  := Integer(ratioW * mWidth)
+    h  := Integer(ratioH * mHeight)
+
+    box := Gui("+AlwaysOnTop -Caption +ToolWindow +E0x20")  ; E0x20 = WS_EX_TRANSPARENT (click-through)
+    box.BackColor := "Red"
+    box.Show("x" sx " y" sy " w" w " h" h " NoActivate")
+    WinSetTransparent(110, box)   ; ~43% opacity so the text stays visible underneath
+
+    ShowNotif("info", "OCR Box", w "x" h " px @ (" sx ", " sy ")")
+    SetTimer(() => box.Destroy(), -durationMs)
+}
+
 ScanOCR(ratioX, ratioY, ratioW, ratioH, waitTime := 0, targetText := "", searchNumber := false, notif := true) {
     global GameTitle
 
